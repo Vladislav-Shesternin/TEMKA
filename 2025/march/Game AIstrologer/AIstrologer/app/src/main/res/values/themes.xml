@@ -1,0 +1,32 @@
+<resources>
+    <style name="Base.Theme.AIstrologer" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
+    <style name="Theme.AIstrologer" parent="Base.Theme.AIstrologer"/>
+
+
+    <style name="CustomDatePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Колір фону -->
+        <item name="android:windowBackground">@color/white</item>
+        <!-- Колір заголовка -->
+        <item name="android:colorAccent">@color/blue_17</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <!-- Колір кружка, що вибирає дату -->
+        <item name="colorControlActivated">@color/blue_17</item>
+        <!-- Колір кнопок -->
+        <item name="android:buttonBarPositiveButtonStyle">@style/CustomPositiveButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/CustomNegativeButton</item>
+    </style>
+
+    <style name="CustomPositiveButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:backgroundTint">@color/white</item> <!-- Фон кнопки -->
+    </style>
+
+    <style name="CustomNegativeButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:backgroundTint">@color/white</item> <!-- Фон кнопки -->
+    </style>
+</resources>

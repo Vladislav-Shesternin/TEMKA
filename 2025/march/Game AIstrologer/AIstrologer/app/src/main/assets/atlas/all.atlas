@@ -1,0 +1,91 @@
+all.png
+size: 1006, 1189
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+back_def
+  rotate: false
+  xy: 352, 2
+  size: 147, 100
+  orig: 147, 100
+  offset: 0, 0
+  index: -1
+back_press
+  rotate: false
+  xy: 501, 2
+  size: 147, 100
+  orig: 147, 100
+  offset: 0, 0
+  index: -1
+blum
+  rotate: false
+  xy: 206, 2
+  size: 144, 144
+  orig: 144, 144
+  offset: 0, 0
+  index: -1
+btn_deff
+  rotate: false
+  xy: 357, 148
+  size: 500, 150
+  orig: 500, 150
+  offset: 0, 0
+  index: -1
+btn_dis
+  rotate: false
+  xy: 2, 596
+  size: 500, 150
+  orig: 500, 150
+  offset: 0, 0
+  index: -1
+btn_press
+  rotate: false
+  xy: 504, 596
+  size: 500, 150
+  orig: 500, 150
+  offset: 0, 0
+  index: -1
+check_def
+  rotate: false
+  xy: 2, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+check_press
+  rotate: false
+  xy: 104, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+date
+  rotate: false
+  xy: 650, 2
+  size: 236, 53
+  orig: 236, 53
+  offset: 0, 0
+  index: -1
+input
+  rotate: false
+  xy: 2, 748
+  size: 936, 337
+  split: 164, 182, 228, 75
+  pad: -1, -1, -1, -1
+  orig: 936, 337
+  offset: 0, 0
+  index: -1
+select
+  rotate: false
+  xy: 2, 148
+  size: 353, 446
+  orig: 353, 446
+  offset: 0, 0
+  index: -1
+top
+  rotate: false
+  xy: 2, 1087
+  size: 936, 100
+  orig: 936, 100
+  offset: 0, 0
+  index: -1
