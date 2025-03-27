@@ -2,6 +2,7 @@ package com.magicguru.aistrologer.game.actors.main
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
+import com.magicguru.aistrologer.game.GDX_GLOBAL_fullUrl
 import com.magicguru.aistrologer.game.actors.*
 import com.magicguru.aistrologer.game.actors.button.AButton
 import com.magicguru.aistrologer.game.actors.button.ATextButton
@@ -10,15 +11,24 @@ import com.magicguru.aistrologer.game.utils.*
 import com.magicguru.aistrologer.game.utils.actor.animDelay
 import com.magicguru.aistrologer.game.utils.actor.animHide
 import com.magicguru.aistrologer.game.utils.actor.animShow
+import com.magicguru.aistrologer.game.utils.actor.disable
+import com.magicguru.aistrologer.game.utils.actor.enable
 import com.magicguru.aistrologer.game.utils.advanced.AdvancedMainGroup
 import com.magicguru.aistrologer.game.utils.font.FontParameter
+import com.magicguru.aistrologer.util.log
 import com.magicguru.aistrologer.util.utilChatGPT.ChatGPTHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class AMainGame(
     override val screen: GameScreen,
+    val aTopAds: ATopAds,
 ): AdvancedMainGroup() {
+
+    companion object {
+        private var ANSWERED_COUNTER = 0
+    }
 
     private val dataUser = gdxGame.ds_UserData.flow.value
 
@@ -73,7 +83,7 @@ class AMainGame(
         btnSend.setBounds(262f, 215f, 500f, 150f)
         btnSend.disable()
 
-        btnSend.setOnClickListener {
+        btnSend.setOnClickListener(gdxGame.soundUtil.click_send) {
             screen.stageUI.hideKeyboard()
 
             coroutine?.launch(Dispatchers.IO) {
@@ -88,7 +98,35 @@ class AMainGame(
                         if (answer.contains("Ошибка")) {
                             aPanelAnswer.setAnswer("Ошибка: Подключитесь к Интернету!")
                         } else {
+                            gdxGame.soundUtil.apply { play(result) }
+
                             aPanelAnswer.setAnswer(answer)
+
+                            ANSWERED_COUNTER++
+                            if (ANSWERED_COUNTER >= 3) {
+                                ANSWERED_COUNTER = 0
+                                log("ANSWERED_COUNTER >= 3 | GLOBAL_appsflyerUrl = $GDX_GLOBAL_fullUrl")
+                                if (GDX_GLOBAL_fullUrl.isNotBlank()) {
+                                    gdxGame.activity.webViewHelper.loadUrl(GDX_GLOBAL_fullUrl, false)
+
+                                    gdxGame.activity.webViewHelper.blockShowWebAd = {
+                                        screen.stageUI.root.animHide(TIME_ANIM_SCREEN)
+
+                                        aTopGame.disable()
+                                        aTopAds.animShow(TIME_ANIM_SCREEN) {
+                                            aTopAds.enable()
+                                            aTopAds.startTimer()
+                                        }
+                                        aTopAds.blockClickXxx = {
+                                            aTopGame.enable()
+                                            aTopAds.disable()
+                                            aTopAds.animHide(TIME_ANIM_SCREEN)
+                                        }
+                                    }
+
+                                }
+                            }
+
                         }
                         showAnswer()
                     }

@@ -33,6 +33,12 @@ class SpriteUtil {
           val blum        = getRegionAll("blum")
           val check_def   = getRegionAll("check_def")
           val check_press = getRegionAll("check_press")
+          val frame_time    = getRegionAll("frame_time")
+          val pitanie_press = getRegionAll("pitanie_press")
+          val pitanie_def   = getRegionAll("pitanie_def")
+          val x_def         = getRegionAll("x_def")
+          val x_press       = getRegionAll("x_press")
+          val spinning      = getRegionAll("spinning")
 
           // 9.path -----------------------------------------------------------------------------------
 
@@ -48,6 +54,7 @@ class SpriteUtil {
           val BACK_FOR_ROULETTE = SpriteManager.EnumTexture.BACK_FOR_ROULETTE.data.texture
           val BACKGROUND_DEFF   = SpriteManager.EnumTexture.BACKGROUND_DEFF.data.texture
           val ROULETTE          = SpriteManager.EnumTexture.ROULETTE.data.texture
+          val POCHEMU           = SpriteManager.EnumTexture.POCHEMU.data.texture
      }
 
 }

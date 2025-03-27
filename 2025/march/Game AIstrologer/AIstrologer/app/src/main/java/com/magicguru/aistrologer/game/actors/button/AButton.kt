@@ -36,7 +36,7 @@ open class AButton(
     private var sound: SoundUtil.AdvancedSound? = null
 
     private val animShowTime = 0.050f
-    private val animHideTime = 0.300f
+    private val animHideTime = 0.070f
 
 
     override fun addActorsOnGroup() {
@@ -176,6 +176,16 @@ open class AButton(
             pressed  = TextureRegionDrawable(gdxGame.assetsAll.check_press),
             disabled = TextureRegionDrawable(gdxGame.assetsAll.check_press),
         )
+        Type.Pitanie -> AButtonStyle(
+            default  = TextureRegionDrawable(gdxGame.assetsAll.pitanie_def),
+            pressed  = TextureRegionDrawable(gdxGame.assetsAll.pitanie_press),
+            disabled = TextureRegionDrawable(gdxGame.assetsAll.pitanie_press),
+        )
+        Type.Xxx -> AButtonStyle(
+            default  = TextureRegionDrawable(gdxGame.assetsAll.x_def),
+            pressed  = TextureRegionDrawable(gdxGame.assetsAll.x_press),
+            disabled = TextureRegionDrawable(gdxGame.assetsAll.x_press),
+        )
     }
 
     // ---------------------------------------------------
@@ -189,7 +199,7 @@ open class AButton(
     )
 
     enum class Type {
-        None, Gradient, Back, Check
+        None, Gradient, Back, Check, Pitanie, Xxx
     }
 
 }

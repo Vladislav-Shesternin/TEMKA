@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.magicguru.aistrologer.MainActivity
 import com.magicguru.aistrologer.game.utils.*
+import com.magicguru.aistrologer.game.utils.actor.animHide
 import com.magicguru.aistrologer.game.utils.font.FontGenerator
 import com.magicguru.aistrologer.game.utils.font.FontGenerator.Companion.FontPath
 import com.magicguru.aistrologer.util.cancelCoroutinesAll
@@ -29,6 +30,12 @@ abstract class AdvancedScreen(
 
     val viewportUI = FitViewport(WIDTH, HEIGHT)
     val stageUI    = AdvancedStage(viewportUI)
+
+    val topViewportBack = ScreenViewport()
+    val topStageBack    = AdvancedStage(viewportBack)
+
+    val topViewportUI = FitViewport(WIDTH, HEIGHT)
+    val topStageUI    = AdvancedStage(viewportUI)
 
     val inputMultiplexer = InputMultiplexer()
     val disposableSet    = mutableSetOf<Disposable>()
@@ -49,6 +56,8 @@ abstract class AdvancedScreen(
 
         viewportBack.update(width, height, true)
         viewportUI.update(width, height - MainActivity.statusBarHeight, true)
+        topViewportBack.update(width, height, true)
+        topViewportUI.update(width, height - MainActivity.statusBarHeight, true)
     }
 
     override fun show() {
@@ -56,21 +65,30 @@ abstract class AdvancedScreen(
 
         stageBack.addActorsOnStageBack()
         stageUI.addActorsOnStageUI()
+        topStageBack.addActorsOnStageTopBack()
+        topStageUI.addActorsOnStageTopUI()
 
-        Gdx.input.inputProcessor = inputMultiplexer.apply { addProcessors(this@AdvancedScreen, stageUI, stageBack) }
-        Gdx.input.setCatchKey(Input.Keys.BACK, true)
+        Gdx.input.inputProcessor = inputMultiplexer.apply { addProcessors(this@AdvancedScreen, topStageUI, topStageBack, stageUI, stageBack) }
+
+        //Gdx.input.setCatchKey(Input.Keys.BACK, true)
+        gdxGame.activity.webViewHelper.blockBack = {
+            if (gdxGame.navigationManager.isBackStackEmpty()) gdxGame.navigationManager.exit()
+            else stageUI.root.animHide(TIME_ANIM_SCREEN) { gdxGame.navigationManager.back() }
+        }
     }
 
     override fun render(delta: Float) {
         stageBack.render()
         stageUI.render()
+        topStageBack.render()
+        topStageUI.render()
         drawerUtil.update()
     }
 
     override fun dispose() {
         log("dispose AdvancedScreen: ${this::class.simpleName}")
         disposeAll(
-            stageBack, stageUI, drawerUtil,
+            stageBack, stageUI, topStageBack, topStageUI, drawerUtil,
             fontGenerator_Ubuntu_Regular,
         )
         disposableSet.disposeAll()
@@ -91,6 +109,8 @@ abstract class AdvancedScreen(
 
     abstract fun AdvancedStage.addActorsOnStageUI()
     open fun AdvancedStage.addActorsOnStageBack() {}
+    open fun AdvancedStage.addActorsOnStageTopBack() {}
+    open fun AdvancedStage.addActorsOnStageTopUI() {}
 
     abstract fun hideScreen(block: Runnable = Runnable {})
 

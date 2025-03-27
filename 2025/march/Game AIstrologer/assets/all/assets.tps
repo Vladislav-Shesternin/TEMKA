@@ -252,6 +252,25 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">frame_time.png</key>
+            <key type="filename">pitanie_def.png</key>
+            <key type="filename">pitanie_press.png</key>
+            <key type="filename">x_def.png</key>
+            <key type="filename">x_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,21,51,42</rect>
+                <key>scale9Paddings</key>
+                <rect>25,21,51,42</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">input.9.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -279,6 +298,21 @@
                 <rect>88,112,177,223</rect>
                 <key>scale9Paddings</key>
                 <rect>88,112,177,223</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">spinning.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>234,11,468,21</rect>
+                <key>scale9Paddings</key>
+                <rect>234,11,468,21</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

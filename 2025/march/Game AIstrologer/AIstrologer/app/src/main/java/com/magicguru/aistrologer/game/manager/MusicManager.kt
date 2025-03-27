@@ -17,8 +17,8 @@ class MusicManager(var assetManager: AssetManager) {
     }
 
     enum class EnumMusic(val data: MusicData) {
-        //music_1(MusicData("music/music_1.ogg")),
-        //music_2(MusicData("music/music_2.ogg")),
+        music_1(MusicData("music/m1.ogg")),
+        music_2(MusicData("music/m2.ogg")),
         //music_3(MusicData("music/music_3.ogg")),
     }
 

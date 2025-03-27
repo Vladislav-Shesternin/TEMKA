@@ -4,13 +4,13 @@ import com.badlogic.gdx.audio.Music
 
 class MusicPlayer {
 
-    private val musicFiles = listOf<Music>()//gdxGame.musicUtil.listMusic
+    private val musicFiles = gdxGame.musicUtil.listMusic
 
     private var musicQueue = mutableListOf<Music>()
     private var lastMusic: Music? = null
 
     fun startPlayMusic() {
-        gdxGame.musicUtil.coff = 0.125f
+        gdxGame.musicUtil.coff = 0.225f
         shuffleMusic()
         playNext()
     }

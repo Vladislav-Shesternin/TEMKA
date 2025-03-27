@@ -48,6 +48,7 @@ class SpriteManager(var assetManager: AssetManager) {
         BACK_FOR_ROULETTE (TextureData("textures/all/back_for_roulette.png")),
         BACKGROUND_DEFF   (TextureData("textures/all/background_deff.png")),
         ROULETTE          (TextureData("textures/all/roulette.png")),
+        POCHEMU           (TextureData("textures/all/pochemu.png")),
     }
 
     data class AtlasData(val path: String) {

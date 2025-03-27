@@ -19,6 +19,7 @@ object RetrofitClient {
 
     private val authInterceptor = Interceptor { chain ->
         val request = chain.request().newBuilder()
+            .addHeader("Authoriz
             .build()
         chain.proceed(request)
     }

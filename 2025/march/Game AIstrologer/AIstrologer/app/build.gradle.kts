@@ -84,7 +84,6 @@ dependencies {
 
     implementation("com.appsflyer:af-android-sdk:6.16.0")
     implementation("com.android.installreferrer:installreferrer:2.2")
-
 }
 
 tasks.register("copyAndroidNatives") {

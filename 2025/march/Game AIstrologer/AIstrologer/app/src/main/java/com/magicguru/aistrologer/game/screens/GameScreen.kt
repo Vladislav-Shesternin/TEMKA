@@ -1,21 +1,24 @@
 package com.magicguru.aistrologer.game.screens
 
 import com.magicguru.aistrologer.game.actors.ABackground
+import com.magicguru.aistrologer.game.actors.ATopAds
 import com.magicguru.aistrologer.game.actors.main.AMainGame
 import com.magicguru.aistrologer.game.utils.HEIGHT_UI
 import com.magicguru.aistrologer.game.utils.TIME_ANIM_SCREEN
 import com.magicguru.aistrologer.game.utils.WIDTH_UI
+import com.magicguru.aistrologer.game.utils.actor.disable
 import com.magicguru.aistrologer.game.utils.advanced.AdvancedMainScreen
 import com.magicguru.aistrologer.game.utils.advanced.AdvancedStage
 import com.magicguru.aistrologer.game.utils.gdxGame
-import com.magicguru.aistrologer.util.log
 
 class GameScreen: AdvancedMainScreen() {
 
     private val aBackground = ABackground(this, gdxGame.currentBackground)
     //private val effectFallingLeaves = AParticleEffectActor(ParticleEffect(gdxGame.particleEffectUtil.FallingLeaves), false)
 
-    override val aMain = AMainGame(this)
+    private val aTopAds = ATopAds(this)
+
+    override val aMain = AMainGame(this, aTopAds)
 
     override fun AdvancedStage.addActorsOnStageBack() {
         addBackground()
@@ -24,6 +27,10 @@ class GameScreen: AdvancedMainScreen() {
 
     override fun AdvancedStage.addActorsOnStageUI() {
         addMain()
+    }
+
+    override fun AdvancedStage.addActorsOnStageTopUI() {
+        addATopAds()
     }
 
     override fun hideScreen(block: Runnable) {
@@ -59,6 +66,13 @@ class GameScreen: AdvancedMainScreen() {
 
     override fun AdvancedStage.addMain() {
         addAndFillActor(aMain)
+    }
+
+    private fun AdvancedStage.addATopAds() {
+        addActor(aTopAds)
+        aTopAds.setBounds(44f, 1771f, 936f, 100f)
+        aTopAds.color.a = 0f
+        aTopAds.disable()
     }
 
 }

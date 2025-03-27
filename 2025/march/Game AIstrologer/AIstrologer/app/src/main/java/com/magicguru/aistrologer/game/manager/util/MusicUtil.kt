@@ -15,11 +15,11 @@ class MusicUtil: Disposable {
 
     private val coroutine = CoroutineScope(Dispatchers.Default)
 
-//    private val music_1 = MusicManager.EnumMusic.music_1.data.music
-//    private val music_2 = MusicManager.EnumMusic.music_2.data.music
+    private val music_1 = MusicManager.EnumMusic.music_1.data.music
+    private val music_2 = MusicManager.EnumMusic.music_2.data.music
 //    private val music_3 = MusicManager.EnumMusic.music_3.data.music
 //
-//    val listMusic = listOf(music_1, music_2, music_3)
+    val listMusic = listOf(music_1, music_2, /*music_3*/)
 
     // 0..100
     val volumeLevelFlow = MutableStateFlow(AudioManager.volumeLevelPercent)

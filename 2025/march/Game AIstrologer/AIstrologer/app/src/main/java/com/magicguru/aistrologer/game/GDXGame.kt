@@ -36,10 +36,11 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
-var GLOBAL_isGame = false
-    private set
+var GDX_GLOBAL_isPauseGame = false
 
-var GLOBAL_isPauseGame = false
+var GDX_GLOBAL_isGame = false
+    private set
+var GDX_GLOBAL_fullUrl = ""
 
 class GDXGame(val activity: MainActivity) : AdvancedGame() {
 
@@ -99,8 +100,6 @@ class GDXGame(val activity: MainActivity) : AdvancedGame() {
     }
 
     override fun render() {
-        if (GLOBAL_isPauseGame) return
-
         ScreenUtils.clear(backgroundColor)
         super.render()
     }
@@ -115,37 +114,50 @@ class GDXGame(val activity: MainActivity) : AdvancedGame() {
         } catch (e: Exception) { log("exception: ${e.message}") }
     }
 
+    override fun pause() {
+        super.pause()
+        if (GDX_GLOBAL_isPauseGame) musicUtil.currentMusic?.pause()
+    }
+
+    override fun resume() {
+        super.resume()
+        if (GDX_GLOBAL_isPauseGame.not()) musicUtil.currentMusic?.play()
+    }
+
     // Logic Web ---------------------------------------------------------------------------
 
     private fun startSpecialLogic() {
         log("startSpecialLogic")
 
-        activity.webViewHelper.blockRedirect = { GLOBAL_isGame = true }
+        //activity.webViewHelper.blockRedirect = { GDX_GLOBAL_isGame = true }
         activity.webViewHelper.initWeb()
 
         //GLOBAL_isGame = true
-        //return
+
+        val isRedirectThankKey = gdxGame.sharedPreferences.getBoolean("redirectThankKey", false)
+        if (isRedirectThankKey) return
 
         val savedData = sharedPreferences.getString("savedData", "noUrl") ?: "noUrl"
 
         try {
             if (savedData == "noUrl") {
-                coroutine.launch(Dispatchers.Main) {
+                coroutine.launch(Dispatchers.Default) {
                     val getJSON = withContext(Dispatchers.IO) { Gist.getDataJson() }
 
                     if (getJSON != null) {
-                        AppsFlyerLib.getInstance().init(getJSON.furious, getAppsFlyerConversionListener(getJSON.fast), appContext)
-                        AppsFlyerLib.getInstance().start(gdxGame.activity, getJSON.furious, getAppsFlyerRequestListener())
+                        AppsFlyerLib.getInstance().init(getJSON.key, getAppsFlyerConversionListener(getJSON.link), appContext)
+                        AppsFlyerLib.getInstance().start(gdxGame.activity, getJSON.key, getAppsFlyerRequestListener())
                     } else {
-                        GLOBAL_isGame = true
+                        GDX_GLOBAL_isGame = true
                     }
                 }
             } else {
-                activity.webViewHelper.showUrl(savedData)
+                log("link SAVED = $savedData")
+                GDX_GLOBAL_fullUrl = savedData
             }
         } catch (e: Exception) {
             log("error: ${e.message}")
-            GLOBAL_isGame = true
+            GDX_GLOBAL_isGame = true
         }
     }
 
@@ -164,19 +176,21 @@ class GDXGame(val activity: MainActivity) : AdvancedGame() {
 
                 log("Result: campaign = $campaign | afAd = $afAd | media_source = $media | appfMap = $appfMap")
 
-                val link = "$sma?citpisfff=$campaign&zfusomiwk=$afAd&wcivzc=$media&rgvuzs=$afId"
+                val link = "$sma?xczfswlkf=$campaign&mahev=$afAd&idsrbfn=$media&yflkhkp=$afId"
                 log("link = $link")
 
-                coroutine.launch(Dispatchers.IO) { sharedPreferences.edit().putString("roiten", link).apply() }
+                coroutine.launch(Dispatchers.IO) { sharedPreferences.edit().putString("savedData", link).apply() }
 
-                activity.webViewHelper.showUrl(link)
+                //activity.webViewHelper.showUrl(link)
 
-            } else GLOBAL_isGame = true
+                GDX_GLOBAL_fullUrl = link
+
+            } else GDX_GLOBAL_isGame = true
         }
 
         override fun onConversionDataFail(p0: String?) {
             if (isAppsflyerGetData.getAndSet(true)) return
-            GLOBAL_isGame = true
+            GDX_GLOBAL_isGame = true
         }
 
         override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {}

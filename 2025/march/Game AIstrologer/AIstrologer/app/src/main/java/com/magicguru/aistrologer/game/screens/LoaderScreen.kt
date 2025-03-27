@@ -1,6 +1,6 @@
 package com.magicguru.aistrologer.game.screens
 
-import com.magicguru.aistrologer.game.GLOBAL_isGame
+import com.badlogic.gdx.math.Vector2
 import com.magicguru.aistrologer.game.actors.ABackground
 import com.magicguru.aistrologer.game.actors.main.AMainLoader
 import com.magicguru.aistrologer.game.manager.MusicManager
@@ -25,6 +25,13 @@ class LoaderScreen : AdvancedScreen() {
     private val aMain       by lazy { AMainLoader(this) }
 
     override fun show() {
+        topViewportUI.project(Vector2(0f, 1667f)).also { topPos ->
+            gdxGame.activity.webViewHelper.topY = topPos.y.toInt()
+        }
+        topViewportUI.project(Vector2(0f, 1219f)).also { topPos ->
+            gdxGame.activity.webViewHelper.topY_Dialog = topPos.y.toInt()
+        }
+
         loadSplashAssets()
         super.show()
         //setBackBackground(gdxGame.assetsLoader.BACKGROUND.region)
@@ -141,7 +148,7 @@ class LoaderScreen : AdvancedScreen() {
     }
 
     private fun isFinish() {
-        if (isFinishProgress && GLOBAL_isGame) {
+        if (isFinishProgress /*&& GLOBAL_isGame*/) {
             isFinishProgress = false
 
             toGame()
@@ -149,23 +156,21 @@ class LoaderScreen : AdvancedScreen() {
     }
 
     private fun toGame() {
-        gdxGame.activity.hideWebView()
+        //gdxGame.activity.hideWebView()
 
 //        gdxGame.musicUtil.apply { music = serious.apply {
 //            isLooping = true
 //            coff      = 0.20f
 //        } }
 
-        //MusicPlayer().startPlayMusic()
+        MusicPlayer().startPlayMusic()
 
         gdxGame.currentBackground = gdxGame.assetsLoader.BACKGROUND_BLUR
 
-        hideScreen {
-            if (gdxGame.mapUser[0] != null) {
-                gdxGame.navigationManager.navigate(GameScreen::class.java.name, InputScreen::class.java.name)
-            } else {
-                gdxGame.navigationManager.navigate(InputScreen::class.java.name)
-            }
+        if (gdxGame.mapUser[0] != null) {
+            hideScreen { gdxGame.navigationManager.navigate(GameScreen::class.java.name, InputScreen::class.java.name) }
+        } else {
+            hideScreen { gdxGame.navigationManager.navigate(InputScreen::class.java.name) }
         }
     }
 

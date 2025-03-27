@@ -2,20 +2,16 @@ package com.magicguru.aistrologer
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.pm.ActivityInfo
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.WindowInsets
-import android.view.WindowInsetsController
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
+import androidx.core.view.*
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 import com.badlogic.gdx.utils.Array
 import com.magicguru.aistrologer.databinding.ActivityMainBinding
+import com.magicguru.aistrologer.game.GDX_GLOBAL_isPauseGame
+import com.magicguru.aistrologer.game.utils.gdxGame
 import com.magicguru.aistrologer.util.KeyboardHeightListener
 import com.magicguru.aistrologer.util.OneTime
 import com.magicguru.aistrologer.util.WebViewHelper
@@ -24,49 +20,57 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import kotlin.io.root
+import java.util.*
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), AndroidFragmentApplication.Callbacks {
 
     companion object {
         var statusBarHeight = 0
+        var navBarHeight    = 0
     }
 
     val coroutine  = CoroutineScope(Dispatchers.Default)
     private val onceExit   = OneTime()
 
-    private val onceStatusBarHeight = OneTime()
+    private val onceSystemBarHeight = OneTime()
 
     lateinit var binding : ActivityMainBinding
+
+    val windowInsetsController by lazy { WindowCompat.getInsetsController(window, window.decorView) }
 
     val blockKeyboardHeight = Array<(Int) -> Unit>()
 
     lateinit var webViewHelper: WebViewHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
-        hideNavigationBar()
+        super.onCreate(savedInstanceState)
 
         initialize()
 
         startKeyboardHeightListener()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            onceStatusBarHeight.use {
+            onceSystemBarHeight.use {
                 statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-                hideStatusBar()
+                navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+
+                // hide Status or Nav bar (після встановлення їх розмірів)
+                windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+                windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
 
             if (binding.webView.isVisible) {
-                val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-                binding.root.setPadding(0, 0, 0, imeInsets.bottom)
+                val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                val totalBottom = maxOf(imeBottom, navBottom)
+
+                binding.root.setPadding(0, statusBarHeight, 0, totalBottom)
+                log("ime = $imeBottom | navBar = $navBottom | total = $totalBottom")
             }
 
-            insets
+            WindowInsetsCompat.CONSUMED
         }
     }
 
@@ -90,65 +94,35 @@ class MainActivity : AppCompatActivity(), AndroidFragmentApplication.Callbacks {
 
     // UI Logic -----------------------------------------------------------------------------------------
 
-    private fun hideNavigationBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // API 30 і вище
-            window.insetsController?.let {
-                it.hide(WindowInsets.Type.navigationBars()) // Ховаємо панель навігації
-                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            // Для API нижче 30
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_FULLSCREEN
-                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    )
-        }
-    }
-
-    private fun hideStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // API 30 і вище
-            window.insetsController?.let {
-                it.hide(WindowInsets.Type.statusBars()) // Ховаємо панель навігації
-                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            // Для API нижче 30
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        }
-    }
-
-    @SuppressLint("SourceLockedOrientationActivity")
     fun hideWebView() {
         runOnUiThread {
-            binding.webView.visibility         = View.GONE
-            binding.navHostFragment.visibility = View.VISIBLE
-            binding.navHostFragment.requestFocus()
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            binding.webView.visibility = View.GONE
+            binding.webView.loadUrl("about:blank")
+            binding.root.setPadding(0, 0, 0, 0)
 
-            GLOBAL_isPauseGame = false
+            binding.navHostFragment.requestFocus()
+            GDX_GLOBAL_isPauseGame = false
+            gdxGame.resume()
         }
     }
 
     fun showWebView() {
         runOnUiThread {
-            binding.navHostFragment.visibility = View.GONE
+            binding.root.setPadding(0, statusBarHeight, 0, 0)
             binding.webView.visibility = View.VISIBLE
-            binding.webView.requestFocus()
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_USER
 
-            GLOBAL_isPauseGame = true
+            binding.webView.requestFocus()
+            GDX_GLOBAL_isPauseGame = true
+            gdxGame.pause()
         }
     }
 
     // Keyboard ----------------------------------------------------------------------------------
 
     private fun startKeyboardHeightListener() = KeyboardHeightListener(binding.root) { keyboardHeight ->
-        blockKeyboardHeight.onEach { it(keyboardHeight) }
+        blockKeyboardHeight.onEach {
+            if (binding.webView.isVisible.not()) it(keyboardHeight)
+        }
     }.startListening()
 
     // Dialog ----------------------------------------------------------------------------------------
