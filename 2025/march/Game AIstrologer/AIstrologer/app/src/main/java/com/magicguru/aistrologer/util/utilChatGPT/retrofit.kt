@@ -1,5 +1,6 @@
 package com.magicguru.aistrologer.util.utilChatGPT
 
+import com.magicguru.aistrologer.util.log
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -17,10 +18,15 @@ interface OpenAIService {
 object RetrofitClient {
     private const val BASE_URL = "https://api.openai.com/"
 
+    var dynamicToken: String? = null
+
     private val authInterceptor = Interceptor { chain ->
-        val request = chain.request().newBuilder()
-            .addHeader("Authoriz
-            .build()
+        val request = chain.request().newBuilder().apply {
+            if (!dynamicToken.isNullOrEmpty()) {
+                log("RetrofitClient token: $dynamicToken")
+                addHeader("Authorization", "Bearer $dynamicToken")
+            }
+        }.build()
         chain.proceed(request)
     }
 

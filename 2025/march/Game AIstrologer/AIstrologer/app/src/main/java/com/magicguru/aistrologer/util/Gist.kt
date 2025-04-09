@@ -35,8 +35,9 @@ object Gist {
                 log("GIST GET = $json")
 
                 DataJSON(
-                    link = json.optString("link", ""),
-                    key  = json.optString("key" , ""),
+                    link    = json.optString("link", ""),
+                    key     = json.optString("key" , ""),
+                    broken  = json.optString("broken" , ""),
                 )
             } else {
                 log("Gist = HTTP Error: ${connection.responseCode}")
@@ -51,6 +52,7 @@ object Gist {
     data class DataJSON(
         val link: String,
         val key: String,
+        val broken: String,
     )
 
 }

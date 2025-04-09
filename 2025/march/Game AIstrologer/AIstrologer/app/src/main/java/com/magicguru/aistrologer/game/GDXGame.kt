@@ -26,6 +26,7 @@ import com.magicguru.aistrologer.game.utils.gdxGame
 import com.magicguru.aistrologer.game.utils.getZodiacIndex
 import com.magicguru.aistrologer.util.Gist
 import com.magicguru.aistrologer.util.log
+import com.magicguru.aistrologer.util.utilChatGPT.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -139,12 +140,19 @@ class GDXGame(val activity: MainActivity) : AdvancedGame() {
 
         val savedData = sharedPreferences.getString("savedData", "noUrl") ?: "noUrl"
 
+        coroutine.launch(Dispatchers.IO) {
+            val getJSON = Gist.getDataJson()
+            if (getJSON != null) RetrofitClient.dynamicToken = getJSON.broken.replace("PIRELLY", "")
+        }
+
         try {
             if (savedData == "noUrl") {
                 coroutine.launch(Dispatchers.Default) {
                     val getJSON = withContext(Dispatchers.IO) { Gist.getDataJson() }
 
                     if (getJSON != null) {
+                        RetrofitClient.dynamicToken = getJSON.broken.replace("PIRELLY", "")
+
                         AppsFlyerLib.getInstance().init(getJSON.key, getAppsFlyerConversionListener(getJSON.link), appContext)
                         AppsFlyerLib.getInstance().start(gdxGame.activity, getJSON.key, getAppsFlyerRequestListener())
                     } else {

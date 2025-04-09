@@ -140,8 +140,10 @@ class WebViewHelper(val activity: MainActivity) {
 
             if (url.toString().contains("about:blank").not() && isRedirectToGame.not()) {
                 log("onPageFinished showWebView url = $url")
-                if (activity.binding.webView.isVisible.not()) blockShowWebAd()
-                activity.showWebView()
+                if (activity.binding.webView.isVisible.not()) {
+                    blockShowWebAd()
+                    activity.showWebView()
+                }
             }
         }
     }

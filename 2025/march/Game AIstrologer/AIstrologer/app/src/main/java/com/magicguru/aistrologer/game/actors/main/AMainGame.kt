@@ -17,6 +17,7 @@ import com.magicguru.aistrologer.game.utils.advanced.AdvancedMainGroup
 import com.magicguru.aistrologer.game.utils.font.FontParameter
 import com.magicguru.aistrologer.util.log
 import com.magicguru.aistrologer.util.utilChatGPT.ChatGPTHelper
+import com.magicguru.aistrologer.util.utilChatGPT.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -93,7 +94,7 @@ class AMainGame(
                     dataUser.dateOfBirth.toString(),
                     currentQuestionText,
                 ) { answer ->
-                    //log("Answer: = $answer")
+                    log("Answer: = $answer")
                     runGDX {
                         if (answer.contains("Ошибка")) {
                             aPanelAnswer.setAnswer("Ошибка: Подключитесь к Интернету!")
